@@ -19,7 +19,7 @@ parse arg
   | otherwise = error $ "Invalid arg " ++ arg
 
 parseExact :: [Char] -> [(Int, Char)]
-parseExact rawExact = filter (\(_, x) -> x /= '_') $ zip [0 ..] rawExact
+parseExact = filter (\(_, x) -> x /= '_') . zip [0 ..]
 
 solve :: [Arg] -> IO ()
 solve args = do
@@ -38,21 +38,15 @@ withChar :: [Char] -> [String] -> [String]
 withChar [] words = words
 withChar _ [] = []
 withChar (c : otherChars) words =
-  withChar otherChars filtered
-  where
-    filtered = filter (\w -> c `elem` w) words
+  withChar otherChars [w | w <- words, c `elem` w]
 
 withoutChar :: [Char] -> [String] -> [String]
 withoutChar [] words = words
 withoutChar _ [] = []
 withoutChar (c : otherChars) words =
-  withoutChar otherChars filtered
-  where
-    filtered = filter (\w -> c `notElem` w) words
+  withoutChar otherChars [w | w <- words, c `notElem` w]
 
 withExact :: [(Int, Char)] -> [String] -> [String]
 withExact [] words = words
 withExact ((pos, c) : otherExact) words =
-  withExact otherExact filtered
-  where
-    filtered = filter (\w -> w !! pos == c) words
+  withExact otherExact [w | w <- words, w !! pos == c]
